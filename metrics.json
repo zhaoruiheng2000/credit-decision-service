@@ -1,0 +1,35 @@
+{
+  "generated_at": "2026-11-16 14:54:37",
+  "data_file": "cleaned.csv",
+  "total_samples": 150000,
+  "soft_fail_threshold": 2,
+  "approval_rate": 0.577267,
+  "bad_rate_on_approved": 0.028756,
+  "false_kill_rate": 0.399174,
+  "reject_rate": 0.189153,
+  "manual_rate": 0.23358,
+  "counts": {
+    "pass": 86590,
+    "reject": 28373,
+    "manual": 35037,
+    "good_total": 139974,
+    "bad_total": 10026,
+    "bad_in_pass": 2490,
+    "good_killed": 55874
+  },
+  "rule_hit_distribution": {
+    "MIN_AGE": 0,
+    "EVER_90DPD": 8338,
+    "HIGH_REVOLVING": 25133,
+    "EVER_60DPD": 7604,
+    "HIGH_DTI": 56292,
+    "LOW_INCOME": 23326,
+    "MANY_LINES": 13826,
+    "INCOME_MISSING": 29731
+  },
+  "definitions": {
+    "approval_rate": "决策为“通过”的样本数 / 总样本数",
+    "bad_rate_on_approved": "决策为“通过”的样本中 bad_flag 的均值",
+    "false_kill_rate": "好客户（bad_flag=0）中被决策为“拒绝”或“人工”的比例"
+  }
+}

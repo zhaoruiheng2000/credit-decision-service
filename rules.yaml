@@ -1,0 +1,52 @@
+# 信贷准入规则集（stage2）
+# 口径来源：PROJECT.md「规则引擎口径（固定）」
+# - 规则总数：8 条（HARD 3 + SOFT 5）
+# - condition 一律使用内部字段名（snake_case），禁止原始列名
+# - 运算符仅支持 < > <= >= == !=
+# - 阈值依据：bin_bad_rate.csv 的分箱坏账率
+
+policy:
+  soft_fail_threshold: 2
+
+rules:
+  # ---------- HARD：命中即拒绝 ----------
+  - code: MIN_AGE
+    condition: "age < 21"
+    severity: HARD
+    reason: "年龄低于 21 岁，不满足准入年龄下限（age 最低箱 21-39 岁坏账率 10.53%）"
+
+  - code: EVER_90DPD
+    condition: "ever_90dpd == 1"
+    severity: HARD
+    reason: "存在 90 天以上逾期历史，属严重不良记录，直接拒绝"
+
+  - code: HIGH_REVOLVING
+    condition: "revolving_util > 0.8"
+    severity: HARD
+    reason: "信用卡循环额度使用率超过 0.8，落入最坏箱（0.699-1.0 坏账率 19.88%）"
+
+  # ---------- SOFT：累计命中数达阈值转人工 ----------
+  - code: EVER_60DPD
+    condition: "ever_60dpd == 1"
+    severity: SOFT
+    reason: "存在 60-89 天逾期历史，风险偏高，需人工复核"
+
+  - code: HIGH_DTI
+    condition: "debt_ratio > 0.5"
+    severity: SOFT
+    reason: "负债收入比超过 0.5，落入高坏账区间（0.468-4.0 坏账率 9.88%）"
+
+  - code: LOW_INCOME
+    condition: "monthly_income < 3000"
+    severity: SOFT
+    reason: "月收入低于 3000，偿付能力偏弱（最低收入箱坏账率 9.21%）"
+
+  - code: MANY_LINES
+    condition: "open_credit_lines > 15"
+    severity: SOFT
+    reason: "未结清信贷账户超过 15 个，多头借贷风险"
+
+  - code: INCOME_MISSING
+    condition: "income_missing == 1"
+    severity: SOFT
+    reason: "月收入缺失，收入信息不可核验，需人工补充材料"
